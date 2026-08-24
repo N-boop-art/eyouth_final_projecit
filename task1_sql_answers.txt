@@ -1,0 +1,110 @@
+Task 1: Data gathering and combination
+Q1: How much is each member borrowing?
+SQL Query:
+SELECT m.member_id, m.first_name, m.last_name, COUNT(c.checkout_id) as total_checkouts
+FROM members m
+LEFT JOIN checkouts c ON m.member_id = c.member_id
+GROUP BY m.member_id;
+
+Reasoning: 
+I use the LEFT JOIN so we don't lose members who haven't borrowed anything yet
+
+Result:
+    member_id first_name last_name  total_checkouts
+0        1001      Salma   Ibrahim                1
+1        1002      Fares     Saleh                2
+2        1003     Bassel    Hegazy                9
+3        1004      Fares     Wahba                0
+4        1005    Youssef     Halim                3
+..        ...        ...       ...              ...
+75       1076       Dina     Wahba                7
+76       1077       Lina    Rashad                6
+77       1078     Habiba     Osman                0
+78       1079       Rana     Osman               10
+79       1080     Bassel     Wahba                2
+[80 rows x 4 columns]
+
+
+Question 2: Which books match a chosen author pattern?
+SQL Query:
+SELECT * FROM books WHERE author LIKE '%Aya%';
+
+Reasoning: 
+I use the LIKE to search across all names that have "Aya" name
+
+Result:
+   book_id                title     author
+0      505  Letters to the Nile  Aya Hafez
+1      506  The Paper Boat Club  Aya Hafez
+
+
+Question 3: What are the most popular books?
+SQL Query:
+SELECT b.title, COUNT(c.checkout_id) as checkouts
+FROM checkouts c
+JOIN books b ON c.book_id = b.book_id
+GROUP BY b.book_id
+ORDER BY checkouts DESC
+LIMIT 5;
+
+Reasoning: 
+I join the checkouts and books tables, groupby book_id to count how much times each book was borrowed, and sorting the results in descending order to easily get the top 5.
+
+Result:
+                    title  checkouts
+0         The Silver Kite         57
+1   Fossils and Fireflies         55
+2  Circuits for Beginners         46
+3        Kites Over Cairo         38
+4    Storms and Sailboats         25
+
+
+Question 4: Who are the most active readers?
+SQL Query:
+SELECT m.first_name, m.last_name, COUNT(c.checkout_id) as checkouts
+FROM checkouts c 
+JOIN members m ON c.member_id = m.member_id
+GROUP BY m.member_id 
+ORDER BY checkouts DESC 
+LIMIT 10;
+
+Reasoning: 
+I join the members table groupby member_id to get the checkout count per person,and simpliy it to get top 10 only
+
+Result:
+   first_name last_name  checkouts
+0        Aya     Wahba         25
+1     Sherif     Saleh         21
+2       Ziad     Saleh         19
+3    Mostafa     Fouad         18
+4       Nour     Nabil         18
+5       Adam     Fahmy         17
+6    Youssef    Hegazy         17
+7      Ahmed    Shafik         17
+8       Sara    Rashad         16
+9       Reem     Osman         16
+
+
+Question 5: What does a neighborhood's activity look like further back in time?
+SQL Query & Python Code:
+SELECT c.*, m.neighborhood
+FROM checkouts c
+JOIN members m ON c.member_id = m.member_id
+WHERE m.neighborhood = 'Maadi'
+ORDER BY c.checkout_date DESC;
+
+Reasoning: 
+I used SQL to filter for the 'Maadi' neighborhood and sort the dates so the newest ones appear first. Then I just use Pandas slicing ".iloc[10:]"  to takr the first 10 checkouts.
+
+Result:
+    checkout_id  member_id  book_id checkout_date return_date neighborhood
+10         9103       1003      513    2025-09-04  2025-09-25        Maadi
+11         9081       1017      502    2025-08-25  2025-09-17        Maadi
+12         9001       1008      501    2025-08-23  2025-08-28        Maadi
+13         9050       1003      521    2025-08-21         NaN        Maadi
+14         9085       1018      525    2025-08-19  2025-09-18        Maadi
+
+
+Reflection: Web Page (HTML) vs. Database / API Data Sources
+
+there is a great diffreance between them as html is used to let normal human understand what in the webpage but api it was a data that used to analyse data and is used by data analyser to do many thinks such as generating ai models and there is another differance between the html is written with many languages such as css,javascript,html but api is written with JSON and XML and the third diffrance between them that data anaylyser can use both html,api but they prefer api bec it is easy use in data analyse but html they uses many hard methoud such as beuitiful soup libaray so if data analyser didn't  find api o they will use html instead and thank for reading
